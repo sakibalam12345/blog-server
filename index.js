@@ -24,7 +24,8 @@ const client = new MongoClient(uri, {
   }
 });
 
-const essentialcollection = client.db('essentialitem').collection('item')
+const essentialcollection = client.db('essentialitem').collection('item');
+const addblogcollection = client.db('addblog').collection('info');
 
 async function run() {
   try {
@@ -36,6 +37,26 @@ async function run() {
         const cursor = await essentialcollection.find().toArray();
         res.send(cursor)
     })
+
+    // addblog apis
+
+    app.post('/info', async(req,res)=>{
+        const alldata = req.body;
+        console.log(alldata)
+        const result = await addblogcollection.insertOne(alldata);
+        res.send(result)
+    })
+
+    app.get('/info', async(req,res)=>{
+        const cursor = await addblogcollection.find().toArray();
+        res.send(cursor)
+    })
+
+
+
+
+
+
 
 
 
