@@ -26,6 +26,7 @@ const client = new MongoClient(uri, {
 
 const essentialcollection = client.db('essentialitem').collection('item');
 const addblogcollection = client.db('addblog').collection('info');
+const wishlistcollection = client.db('allwishlist').collection('wishlist')
 
 async function run() {
   try {
@@ -46,6 +47,14 @@ async function run() {
         const result = await addblogcollection.insertOne(alldata);
         res.send(result)
     })
+    // wishlist api
+    app.post('/wishlist', async(req,res)=>{
+      const alldata = req.body;
+      console.log(alldata);
+      const result = await wishlistcollection.insertOne(alldata);
+      res.send(result)
+    })
+
 
     app.get('/info', async(req,res)=>{
         const cursor = await addblogcollection.find().toArray();
