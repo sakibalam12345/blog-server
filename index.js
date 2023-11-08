@@ -26,7 +26,8 @@ const client = new MongoClient(uri, {
 
 const essentialcollection = client.db('essentialitem').collection('item');
 const addblogcollection = client.db('addblog').collection('info');
-const wishlistcollection = client.db('allwishlist').collection('wishlist')
+const wishlistcollection = client.db('allwishlist').collection('wishlist');
+const commentcollection = client.db('allcomment').collection('comment')
 
 async function run() {
   try {
@@ -55,9 +56,9 @@ async function run() {
 
     app.get('/info/:id', async(req,res)=>{
       const id = req.params.id;
-      console.log(id)
+      // console.log(id)
       const options = {
-        projection: {  title: 1, image: 1,shortdes : 1 ,category : 1,longdes :1 },
+        projection: { _id:1, title: 1, image: 1,shortdes : 1 ,category : 1,longdes :1 },
       };
       const filter = { _id : new ObjectId(id)}
       const result = await addblogcollection.findOne(filter,options)
@@ -81,6 +82,14 @@ async function run() {
       // console.log(id)
       const filter = { _id : new ObjectId(id)}
       const result = await wishlistcollection.deleteOne(filter)
+      res.send(result)
+    })
+
+    // comment api
+
+    app.post('/comment',async(req,res)=>{
+      const alldata = req.body;
+      const result = await commentcollection.insertOne(alldata)
       res.send(result)
     })
 
