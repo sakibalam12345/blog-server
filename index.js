@@ -40,12 +40,28 @@ async function run() {
     })
 
     // addblog apis
+    app.get('/info', async(req,res)=>{
+      const cursor = await addblogcollection.find().toArray();
+      res.send(cursor)
+  })
+
 
     app.post('/info', async(req,res)=>{
         const alldata = req.body;
         // console.log(alldata)
         const result = await addblogcollection.insertOne(alldata);
         res.send(result)
+    })
+
+    app.get('/info/:id', async(req,res)=>{
+      const id = req.params.id;
+      console.log(id)
+      const options = {
+        projection: {  title: 1, image: 1,shortdes : 1 ,category : 1,longdes :1 },
+      };
+      const filter = { _id : new ObjectId(id)}
+      const result = await addblogcollection.findOne(filter,options)
+      res.send(result)
     })
     // wishlist api
     app.post('/wishlist', async(req,res)=>{
@@ -62,23 +78,11 @@ async function run() {
 
     app.delete('/wishlist/:id', async(req,res)=>{
       const id = req.params.id;
-      console.log(id)
+      // console.log(id)
       const filter = { _id : new ObjectId(id)}
       const result = await wishlistcollection.deleteOne(filter)
       res.send(result)
     })
-
-
-    app.get('/info', async(req,res)=>{
-        const cursor = await addblogcollection.find().toArray();
-        res.send(cursor)
-    })
-
-
-
-
-
-
 
 
 
