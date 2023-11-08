@@ -53,7 +53,7 @@ async function run() {
         const result = await addblogcollection.insertOne(alldata);
         res.send(result)
     })
-
+// for blogdetails
     app.get('/info/:id', async(req,res)=>{
       const id = req.params.id;
       // console.log(id)
@@ -64,6 +64,26 @@ async function run() {
       const result = await addblogcollection.findOne(filter,options)
       res.send(result)
     })
+
+    app.patch('/info/:id', async(req,res)=>{
+      const id = req.params.id;
+      console.log(id)
+      const filter = { _id : new ObjectId(id)}
+    const updatedbody = req.body;
+    console.log(updatedbody)
+      const updateDoc = {
+        $set: {
+          title : updatedbody.title,
+          image : updatedbody.image,
+       shortdes : updatedbody.shortdes,
+      category  : updatedbody.category,
+        longdes : updatedbody.longdes
+        },
+      };
+      const result = await addblogcollection.updateOne(filter,updateDoc)
+      res.send(result)
+    })
+
     // wishlist api
     app.post('/wishlist', async(req,res)=>{
       const alldata = req.body;
@@ -97,8 +117,6 @@ async function run() {
       const cursor = await commentcollection.find().toArray()
       res.send(cursor)
     })
-
-
 
 
     await client.db("admin").command({ ping: 1 });
