@@ -93,6 +93,11 @@ async function run() {
       res.send(result)
     })
 
+    app.get('/comment',async(req,res)=>{
+      const cursor = await commentcollection.find().toArray()
+      res.send(cursor)
+    })
+
 
 
 
