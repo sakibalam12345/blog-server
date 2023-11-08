@@ -55,6 +55,11 @@ async function run() {
       res.send(result)
     })
 
+    app.get('/wishlist', async(req,res)=>{
+      const cursor = await wishlistcollection.find().toArray()
+      res.send(cursor)
+    })
+
 
     app.get('/info', async(req,res)=>{
         const cursor = await addblogcollection.find().toArray();
