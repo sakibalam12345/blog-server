@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
+const cookieparser = require('cookie-parser')
 require('dotenv').config()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
@@ -9,17 +10,19 @@ const port = process.env.PORT || 5000;
 // middleware
 
 app.use(cors({
-  origin : ['http://localhost:5173'],
+  origin : [
+    // 'http://localhost:5173'
+    'https://blog-website-15a06.web.app',
+    'https://blog-website-15a06.firebaseapp.com'
+  ],
   credentials : true
 }));
 app.use(express.json());
+app.use(cookieparser())
 
-// blog-website
-// 8H4TROCgWUy2d97v
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.9ce2m8v.mongodb.net/?retryWrites=true&w=majority`;
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -28,10 +31,8 @@ const client = new MongoClient(uri, {
   }
 });
 
-
 async function run() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
     const essentialcollection = client.db('essentialitem').collection('item');
