@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 require('dotenv').config()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
@@ -7,7 +8,10 @@ const port = process.env.PORT || 5000;
 
 // middleware
 
-app.use(cors());
+app.use(cors({
+  origin : ['http://localhost:5173'],
+  credentials : true
+}));
 app.use(express.json());
 
 // blog-website
@@ -24,15 +28,36 @@ const client = new MongoClient(uri, {
   }
 });
 
-const essentialcollection = client.db('essentialitem').collection('item');
-const addblogcollection = client.db('addblog').collection('info');
-const wishlistcollection = client.db('allwishlist').collection('wishlist');
-const commentcollection = client.db('allcomment').collection('comment')
 
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+
+    const essentialcollection = client.db('essentialitem').collection('item');
+    const addblogcollection = client.db('addblog').collection('info');
+    const wishlistcollection = client.db('allwishlist').collection('wishlist');
+    const commentcollection = client.db('allcomment').collection('comment')
+
+    // auth api
+
+    app.post('/jwt', async(req,res)=>{
+      const user = req.body;
+      console.log('token user', user)
+      const token = jwt.sign(user, process.env.ACCESS_TOKEN, {expiresIn : '3h'})
+      res.cookie('token', token, {
+        httpOnly : true,
+        secure : true,
+        sameSite : 'none'
+      })
+      .send({success : true})
+    })
+
+    app.post('/signout', async(req,res)=>{
+      const user = req.body;
+      res.clearCookie('token',{maxAge : 0})
+      .send({success : true})
+    })
     // Send a ping to confirm a successful connection
 
     app.get('/item', async(req,res)=>{
